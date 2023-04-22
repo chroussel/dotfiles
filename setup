@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOTFILES=$HOME/.dotfiles
+DOTFILES=$HOME/dotfiles
 STOW_FOLDER=(nvim tmux powerlevel10k zsh)
 
 pushd $DOTFILES
