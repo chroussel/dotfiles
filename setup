@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+DOTFILES=$HOME/.dotfiles
+STOW_FOLDER=nvim
+
+pushd $DOTFILES
+for folder in $STOW_FOLDER
+do
+    echo "stow $folder"
+    stow -D $folder
+    stow $folder
+done
+popd
