@@ -1,0 +1,2 @@
+require("lua_config")
+

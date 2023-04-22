@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 DOTFILES=$HOME/.dotfiles
-STOW_FOLDER=nvim
+STOW_FOLDER=(nvim tmux powerlevel10k zsh)
 
 pushd $DOTFILES
-for folder in $STOW_FOLDER
+for folder in ${STOW_FOLDER[@]}
 do
     echo "stow $folder"
     stow -D $folder
