@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 DOTFILES=$HOME/dotfiles
-STOW_FOLDER=(nvim tmux powerlevel10k zsh)
+STOW_FOLDER=(nvim omnisharp tmux powerlevel10k zsh)
 
 pushd $DOTFILES
 for folder in ${STOW_FOLDER[@]}
