@@ -49,13 +49,13 @@ return require('packer').startup(function(use)
     use({ 'scalameta/nvim-metals', requires = { "nvim-lua/plenary.nvim" } })
     use {
         'VonHeikemen/lsp-zero.nvim',
-        branch = 'v1.x',
+        branch = 'v2.x',
         requires = {
             -- LSP Support
             { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
-
+            { 'Hoffs/omnisharp-extended-lsp.nvim'},
             -- Autocompletion
             { 'hrsh7th/nvim-cmp' },
             { 'hrsh7th/cmp-buffer' },
@@ -63,13 +63,15 @@ return require('packer').startup(function(use)
             { 'saadparwaiz1/cmp_luasnip' },
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
-
+            { 'hrsh7th/cmp-nvim-lsp-signature-help'},
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
         }
     }
-
+    use('simrat39/rust-tools.nvim')
+    use 'nvim-lua/plenary.nvim'
+    use ('mfussenegger/nvim-dap')
     use("folke/zen-mode.nvim")
     use("github/copilot.vim")
     use("eandrju/cellular-automaton.nvim")

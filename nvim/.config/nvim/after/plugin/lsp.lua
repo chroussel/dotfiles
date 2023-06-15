@@ -1,6 +1,4 @@
-local lsp = require("lsp-zero")
-
-lsp.preset("recommended")
+local lsp = require("lsp-zero").preset({})
 
 lsp.ensure_installed({
     'tsserver',
@@ -8,27 +6,24 @@ lsp.ensure_installed({
     'lua_ls'
 })
 
-
+require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
     ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
     ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<S-Tab>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<Tab>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
     ["<C-Space>"] = cmp.mapping.complete(),
 })
 
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
 
 lsp.setup_nvim_cmp({
     mapping = cmp_mappings
 })
-
-
-lsp.nvim_workspace()
-
 
 lsp.set_preferences({
     suggest_lsp_servers = false,
@@ -51,9 +46,12 @@ lsp.configure("csharp_ls", {
 })
 
 lsp.configure("omnisharp", {
-   cmd = {"dotnet", "/Users/c.roussel/.dotnet/tools/omnisharp/OmniSharp.dll"},
-   enable_import_completion = true,
-   enable_roslyn_analyzers = true,
+    cmd = { "dotnet", "/Users/c.roussel/.dotnet/tools/omnisharp/OmniSharp.dll" },
+    enable_import_completion = false,
+    enable_roslyn_analyzers = true,
+    handlers = {
+        ["textDocument/definition"] = require('omnisharp_extended').handler,
+    }
 })
 
 lsp.on_attach(function(client, bufnr)
@@ -148,8 +146,33 @@ lsp.on_attach(function(client, bufnr)
     end
 end)
 
-
+lsp.skip_server_setup({ 'rust_analyzer' })
 lsp.setup()
+
+local rust_tools = require('rust-tools')
+rust_tools.setup({
+    tools = {
+        hover_with_actions = false,
+    },
+    server = {
+        on_attach = function(_, bufnr)
+
+        end,
+        ['rust-analyzer'] = {
+            diagnostics = {
+                enable = true
+            },
+            checkOnSave = {
+                command = "clippy",
+            },
+            cargo = {
+                allFeatures = true,
+            }
+        }
+    }
+
+})
+
 
 vim.diagnostic.config({
     virtual_text = true
