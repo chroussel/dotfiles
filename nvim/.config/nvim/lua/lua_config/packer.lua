@@ -27,8 +27,8 @@ return require('packer').startup(function(use)
             require("trouble").setup {
                 icons = false,
                 use_diagnostic_signs = true,
-                fold_open = "v",    -- icon used for open folds
-                fold_closed = ">",  -- icon used for closed folds
+                fold_open = "v",   -- icon used for open folds
+                fold_closed = ">", -- icon used for closed folds
                 -- your configuration comes here
                 -- or leave it empty to use the default settings
                 -- refer to the configuration section below
@@ -55,7 +55,7 @@ return require('packer').startup(function(use)
             { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
-            { 'Hoffs/omnisharp-extended-lsp.nvim'},
+            { 'Hoffs/omnisharp-extended-lsp.nvim' },
             -- Autocompletion
             { 'hrsh7th/nvim-cmp' },
             { 'hrsh7th/cmp-buffer' },
@@ -63,17 +63,26 @@ return require('packer').startup(function(use)
             { 'saadparwaiz1/cmp_luasnip' },
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'hrsh7th/cmp-nvim-lua' },
-            { 'hrsh7th/cmp-nvim-lsp-signature-help'},
+            { 'hrsh7th/cmp-nvim-lsp-signature-help' },
             -- Snippets
             { 'L3MON4D3/LuaSnip' },
             { 'rafamadriz/friendly-snippets' },
         }
     }
-    use('simrat39/rust-tools.nvim')
+    use('mrcjkb/rustaceanvim')
     use 'nvim-lua/plenary.nvim'
-    use ('mfussenegger/nvim-dap')
+    use('mfussenegger/nvim-dap')
     use("folke/zen-mode.nvim")
     use("github/copilot.vim")
     use("eandrju/cellular-automaton.nvim")
     use("laytan/cloak.nvim")
+    use('simrat39/inlay-hints.nvim')
+    use { 'stevearc/conform.nvim' }
+    use {
+        "olexsmir/gopher.nvim",
+        requires = { -- dependencies
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+        },
+    }
 end)

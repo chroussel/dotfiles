@@ -1,72 +1,75 @@
-local lsp = require("lsp-zero").preset({})
+local ih = require("inlay-hints")
+ih.setup()
 
+local lsp = require("lsp-zero").preset({})
 lsp.ensure_installed({
-    'tsserver',
-    'rust_analyzer',
-    'lua_ls'
+    "tsserver",
+    "lua_ls",
+    "gopls",
 })
 
-require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
-
-local cmp = require('cmp')
+local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<S-Tab>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<Tab>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
+    ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
+    ["<C-e>"] = cmp.mapping.close(),
+    ["<S-Tab>"] = cmp.mapping.select_prev_item(cmp_select),
+    ["<Tab>"] = cmp.mapping.select_next_item(cmp_select),
+    ["<CR>"] = cmp.mapping.confirm({ select = false }),
+    ["<C-y>"] = cmp.mapping.confirm({ select = true }),
     ["<C-Space>"] = cmp.mapping.complete(),
 })
 
-
 lsp.setup_nvim_cmp({
-    mapping = cmp_mappings
+    mapping = cmp_mappings,
 })
 
 lsp.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
+        error = "E",
+        warn = "W",
+        hint = "H",
+        info = "I",
     },
-})
-
-local root_pattern = require('lspconfig.util').root_pattern
-
-lsp.configure("csharp_ls", {
-    root_dir = function(fname)
-        local primary = root_pattern("*.sln")(fname)
-        local fallback = root_pattern("*.csproj")(fname)
-        return primary or fallback
-    end
-})
-
-lsp.configure("omnisharp", {
-    cmd = { "dotnet", "/Users/c.roussel/.dotnet/tools/omnisharp/OmniSharp.dll" },
-    enable_import_completion = false,
-    enable_roslyn_analyzers = true,
-    handlers = {
-        ["textDocument/definition"] = require('omnisharp_extended').handler,
-    }
 })
 
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
-
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+    vim.keymap.set("n", "gd", function()
+        vim.lsp.buf.definition()
+    end, opts)
+    vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover()
+    end, opts)
+    vim.keymap.set("n", "<leader>vws", function()
+        vim.lsp.buf.workspace_symbol()
+    end, opts)
+    vim.keymap.set("n", "<leader>vd", function()
+        vim.diagnostic.open_float()
+    end, opts)
+    vim.keymap.set("n", "[d", function()
+        vim.diagnostic.goto_next()
+    end, opts)
+    vim.keymap.set("n", "]d", function()
+        vim.diagnostic.goto_prev()
+    end, opts)
+    vim.keymap.set("n", "<leader>vca", function()
+        vim.lsp.buf.code_action()
+    end, opts)
+    vim.keymap.set("n", "<leader>vrr", function()
+        vim.lsp.buf.references()
+    end, opts)
+    vim.keymap.set("n", "<leader>vrn", function()
+        vim.lsp.buf.rename()
+    end, opts)
+    vim.keymap.set("i", "<C-h>", function()
+        vim.lsp.buf.signature_help()
+    end, opts)
+    vim.keymap.set("n", "gi", function()
+        vim.lsp.buf.implementation()
+    end, opts)
 
     if client.name == "omnisharp" then
         client.server_capabilities.semanticTokensProvider = {
@@ -146,34 +149,79 @@ lsp.on_attach(function(client, bufnr)
     end
 end)
 
-lsp.skip_server_setup({ 'rust_analyzer' })
-lsp.setup()
+local root_pattern = require("lspconfig.util").root_pattern
 
-local rust_tools = require('rust-tools')
-rust_tools.setup({
-    tools = {
-        hover_with_actions = false,
+require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
+require("lspconfig").lua_ls.setup({
+    on_attach = function(client, bufnr)
+        ih.on_attach(client, bufnr)
+    end,
+    settings = {
+        Lua = {
+            hint = {
+                enable = true,
+            },
+        },
     },
-    server = {
-        on_attach = function(_, bufnr)
-
-        end,
-        ['rust-analyzer'] = {
-            diagnostics = {
-                enable = true
-            },
-            checkOnSave = {
-                command = "clippy",
-            },
-            cargo = {
-                allFeatures = true,
-            }
-        }
-    }
-
 })
 
+require("lspconfig").gopls.setup({
+    on_attach = function(client, bufnr)
+        ih.on_attach(client, bufnr)
+    end,
+    settings = {
+        gopls = {
+            completeUnimported = true,
+            usePlaceholders = true,
+            analyses = {
+                unusedparams = true,
+            },
+            hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+            },
+        },
+    },
+})
+
+lsp.configure("csharp_ls", {
+    root_dir = function(fname)
+        local primary = root_pattern("*.sln")(fname)
+        local fallback = root_pattern("*.csproj")(fname)
+        return primary or fallback
+    end,
+})
+
+lsp.configure("omnisharp", {
+    cmd = { "dotnet", "/Users/c.roussel/.dotnet/tools/omnisharp_x86/OmniSharp.dll" },
+    enable_import_completion = false,
+    enable_roslyn_analyzers = true,
+    handlers = {
+        ["textDocument/definition"] = require("omnisharp_extended").handler,
+    },
+})
+
+lsp.skip_server_setup({ "rust_analyzer" })
+lsp.setup()
+
+require("conform").setup({
+    formatters_by_ft = {
+        lua = { "stylua" },
+        yaml = { { "prettierd", "prettier" } },
+        go = { { "gofmt" } },
+    },
+    format_on_save = {
+        timeout_ms = 10000,
+        lsp_fallback = true,
+    },
+    notify_on_error = false,
+})
 
 vim.diagnostic.config({
-    virtual_text = true
+    virtual_text = true,
 })
